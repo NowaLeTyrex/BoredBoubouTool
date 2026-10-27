@@ -12,19 +12,19 @@
   "theme_color": "#161514",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "boubou-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "boubou-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-maskable-512.png",
+      "src": "boubou-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

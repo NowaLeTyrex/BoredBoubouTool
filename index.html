@@ -15,9 +15,9 @@
     document.documentElement.dataset.theme = t;
   } catch (e) {}
 </script>
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="boubou.webmanifest">
+<link rel="icon" type="image/png" href="boubou-192.png">
+<link rel="apple-touch-icon" href="boubou-192.png">
 <style>
 :root {
   --bg: #161514; --surface: #211f1d; --surface2: #2b2825; --border: #3a3632;
@@ -283,7 +283,7 @@ const EXPORT_KEY = "que-faire-v2-last-export";
 const BANNER_KEY = "que-faire-v2-hide-install";
 const PIN_KEY = "que-faire-v2-pin"; // dernière activité validée aujourd'hui
 const V1_KEY = "activities-v1"; // ancienne version : migrée automatiquement
-const APP_VERSION = "2.4.1";
+const APP_VERSION = "2.4.2";
 const THEME_KEY = "que-faire-v2-theme";
 const WELCOME_KEY = "que-faire-v2-welcome-seen";
 const DAY = 86400000;
@@ -859,7 +859,7 @@ function celebrate() {
 /* ---------- En-tête avec le logo ---------- */
 function brandHeader(subtitle) {
   return h("header", { class: "brand" },
-    h("img", { src: "icon-192.png", alt: "", width: "48", height: "48" }),
+    h("img", { src: "boubou-192.png", alt: "", width: "48", height: "48" }),
     h("div", { class: "brand-text" }, h("h1", null, "Bored Boubou Tool"), subtitle && h("p", { class: "muted" }, subtitle)));
 }
 

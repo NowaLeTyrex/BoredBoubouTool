@@ -1,33 +1,31 @@
-BORED BOUBOU TOOL — v2.4.1
-=========================
+BORED BOUBOU TOOL — v2.4.2
+==========================
 
 Fichiers à mettre à la RACINE du dépôt (pas dans un sous-dossier) :
-  index.html, manifest.json, sw.js, icon-192.png, icon-512.png, icon-maskable-512.png
+  index.html, sw.js, boubou.webmanifest,
+  boubou-192.png, boubou-512.png, boubou-maskable-512.png
 Ce fichier LISEZMOI.txt est facultatif.
 
+Mise à jour depuis une version précédente
+  Supprime du dépôt les anciens fichiers, qui ne servent plus :
+    manifest.json, icon-192.png, icon-512.png, icon-maskable-512.png
+
 Mise en ligne (GitHub Pages)
-  1. github.com → « + » → New repository → nom « que-faire » → PUBLIC → Create.
-     (GitHub Pages gratuit = dépôt public uniquement.)
+  1. github.com → « + » → New repository → PUBLIC → Create.
   2. « Add file » → « Upload files » → glisse les 6 fichiers → Commit changes.
-  3. Settings → Pages → Source : « Deploy from a branch » → Branch : main, dossier / (root) → Save.
-  4. Attends 1 à 2 minutes. Adresse de l'app :
-       https://TON-PSEUDO.github.io/que-faire/
-     (et non github.com/TON-PSEUDO/que-faire, qui n'affiche que les fichiers)
+  3. Settings → Pages → « Deploy from a branch » → main, / (root) → Save.
+  4. Adresse de l'app : https://TON-PSEUDO.github.io/NOM-DU-DEPOT/
+     (et non github.com/..., qui n'affiche que les fichiers)
 
 Installation sur Android (Firefox)
-  5. Ouvre https://TON-PSEUDO.github.io/que-faire/ dans Firefox.
-  6. Menu ⋮ → « Installer » (ou « Ajouter à l'écran d'accueil »).
+  5. Ouvre l'adresse dans Firefox, menu ⋮ → « Installer »
+     (ou « Ajouter à l'écran d'accueil »).
 
 Mettre à jour plus tard
-  Remplace les fichiers sur GitHub. Si tu modifies index.html, change aussi le
-  numéro dans sw.js (ligne CACHE = "boubou-v2.4.1") pour que le téléphone
-  récupère la nouvelle version.
+  Remplace les fichiers sur GitHub et change le numéro dans sw.js
+  (ligne CACHE = "boubou-v2.4.2"). GitHub Pages met jusqu'à 10 minutes
+  à servir la nouvelle version.
 
 Sauvegarde
   Les données restent uniquement dans le navigateur du téléphone.
-  Réglages → « Exporter un fichier » ou « Partager la sauvegarde » de temps en temps.
-
-Changement de nom (depuis « Que faire ? »)
-  Tes activités sont conservées : elles sont liées à l'adresse github.io, pas au nom.
-  L'icône et le nom sur l'écran d'accueil ne se mettent pas forcément à jour :
-  supprime le raccourci, puis réinstalle depuis Firefox (menu ⋮ → Installer).
+  Réglages → « Exporter un fichier » de temps en temps.
