@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<title>Que faire ?</title>
-<meta name="description" content="Choisir une activité selon son énergie, son temps et ses envies.">
+<title>Bored Boubou Tool</title>
+<meta name="description" content="Bored Boubou Tool — choisir une activité selon son énergie, son temps et ses envies.">
+<meta name="application-name" content="Bored Boubou Tool">
 <meta name="theme-color" content="#161514">
 <script>
   /* Applique le thème avant le premier affichage (évite un flash de la mauvaise couleur) */
@@ -250,6 +251,11 @@ input:focus-visible, textarea:focus-visible { outline: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
+.brand { display: flex; align-items: center; gap: 12px; padding: 2px 2px 4px; }
+.brand img { width: 48px; height: 48px; flex: none; border-radius: 50%; }
+.brand-text { min-width: 0; }
+.brand h1 { font-family: var(--serif); font-size: 25px; font-weight: 700; letter-spacing: -.3px; line-height: 1.1; }
+.brand p { font-size: 14px; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -264,7 +270,8 @@ input:focus-visible, textarea:focus-visible { outline: none; }
 <script>
 "use strict";
 /* =========================================================================
-   Que faire ? — v2
+   Bored Boubou Tool (anciennement « Que faire ? »)
+   Les clés de stockage gardent le préfixe « que-faire » pour conserver les données existantes.
    Application sans dépendance : tout est dans ce fichier.
    Données stockées dans le localStorage du navigateur (clé STORE_KEY).
    ========================================================================= */
@@ -276,7 +283,7 @@ const EXPORT_KEY = "que-faire-v2-last-export";
 const BANNER_KEY = "que-faire-v2-hide-install";
 const PIN_KEY = "que-faire-v2-pin"; // dernière activité validée aujourd'hui
 const V1_KEY = "activities-v1"; // ancienne version : migrée automatiquement
-const APP_VERSION = "2.3";
+const APP_VERSION = "2.4.1";
 const THEME_KEY = "que-faire-v2-theme";
 const WELCOME_KEY = "que-faire-v2-welcome-seen";
 const DAY = 86400000;
@@ -293,26 +300,57 @@ const STATUS = { todo: "Pas commencé", doing: "En cours", done: "Terminé" };
 const STATUS_OPTS = [{ v: null, l: "Aucun" }, { v: "todo", l: "Pas commencé" }, { v: "doing", l: "En cours" }, { v: "done", l: "Terminé" }];
 const BLOCK_OPTIONS = [{ d: 1, l: "Jusqu'à demain" }, { d: 3, l: "3 jours" }, { d: 7, l: "1 semaine" }, { d: 30, l: "1 mois" }];
 
-const DEFAULT_TAGS = ["Écran", "Extérieur", "Créatif", "Social", "Solo", "Sport", "Lecture", "Musique", "Ménage", "Apprentissage"]
-  .map((name, i) => ({ name, color: PALETTE[i % PALETTE.length] }));
+/* Données par défaut (premier lancement, « Ajouter les activités d'exemple ») */
+const DEFAULT_TAGS = [
+  {"name": "Écran", "color": "#e07a5f"},
+  {"name": "Extérieur", "color": "#81b29a"},
+  {"name": "Créatif", "color": "#f2cc8f"},
+  {"name": "Social", "color": "#7aa5d8"},
+  {"name": "Solo", "color": "#b388d9"},
+  {"name": "Sport", "color": "#e76f9a"},
+  {"name": "Lecture", "color": "#5fc4c0"},
+  {"name": "Musique", "color": "#d9a05b"},
+  {"name": "Ménage", "color": "#9aa0a6"},
+  {"name": "Apprentissage", "color": "#c5d86d"},
+  {"name": "Bunga-Bunga", "color": "#e07a5f"},
+  {"name": "Switch", "color": "#81b29a"},
+  {"name": "🐱", "color": "#f2cc8f"},
+  {"name": "Photo", "color": "#7aa5d8"},
+];
 const DEFAULT_ACTIVITIES = [
-  { name: "Lire un livre", energy: 1, time: 30, tags: ["Solo", "Lecture"] },
-  { name: "Courir", energy: 4, time: 45, tags: ["Extérieur", "Sport", "Solo"] },
-  { name: "Jouer à un jeu", energy: 2, time: 60, tags: ["Écran", "Solo"], subs: [
-    { name: "Clair Obscur", energy: 3, addTags: ["PC"], status: "todo" },
-    { name: "Overwatch", energy: 2, addTags: ["PC"], removeTags: ["Solo"], status: "doing" },
-    { name: "Gris", energy: 2, addTags: ["Switch"] },
+  {"name": "Lire un livre", "energy": 1, "time": 30, "tags": ["Solo", "Lecture"], "weight": 2, "subs": [
+    {"name": "BD"},
+    {"name": "Roman"},
+    {"name": "Manga de Wawou"},
   ] },
-  { name: "Série", energy: 1, time: 50, tags: ["Écran", "Solo"], subs: [
-    { name: "Nouvelle série", status: "todo" },
-    { name: "Monsters", status: "doing" },
+  {"name": "Aller Courir", "energy": 4, "time": 45, "tags": ["Extérieur", "Sport", "Solo"], "cooldownDays": 1 },
+  {"name": "Jeu vidéo", "energy": 2, "time": 60, "tags": ["Écran", "Solo"], "weight": 2, "subs": [
+    {"name": "Overwatch", "time": 45, "addTags": ["Bunga-Bunga"], "status": "doing"},
+    {"name": "Clair Obscur", "energy": 3, "addTags": ["Bunga-Bunga"], "status": "todo"},
+    {"name": "Gris", "time": 30, "addTags": ["Switch"], "status": "doing"},
+    {"name": "Zelda", "time": 30, "addTags": ["Switch"], "status": "doing"},
+    {"name": "Monster Hunter", "energy": 4, "addTags": ["Bunga-Bunga"], "status": "todo"},
+    {"name": "Spiritfarer (le jeu avec miamiaw)", "time": 30, "addTags": ["Switch"]},
   ] },
-  { name: "Dessin", energy: 2, time: 20, tags: ["Créatif", "Solo"], subs: [
-    { name: "Dessin libre" }, { name: "Peinture magique" }, { name: "Dessin pour les beaux arts" },
+  {"name": "Méditation", "energy": 1, "time": 15, "tags": ["Solo"] },
+  {"name": "Ranger un truc dans la maison", "energy": 3, "time": 30, "tags": ["Ménage", "Solo"], "cooldownDays": 1 },
+  {"name": "Appeler quelqu'un", "energy": 2, "time": 30, "tags": ["Social"] },
+  {"name": "Dessiner", "energy": 2, "time": 30, "tags": ["Créatif", "Solo"], "weight": 2, "subs": [
+    {"name": "Nouveau dessin", "status": "todo"},
+    {"name": "Peinture magique", "status": "doing"},
+    {"name": "Dessin pour les cours", "status": "doing"},
   ] },
-  { name: "Méditation", energy: 1, time: 15, tags: ["Solo"] },
-  { name: "Ranger la maison", energy: 3, time: 30, tags: ["Ménage", "Solo"] },
-  { name: "Appeler un ami", energy: 2, time: 30, tags: ["Social"] },
+  {"name": "Regarder un film", "energy": 1, "time": 120, "tags": ["Écran", "Solo"] },
+  {"name": "Aller à la piscine", "energy": 4, "time": 120, "tags": ["Sport", "Extérieur"], "cooldownDays": 1 },
+  {"name": "Regarder une série", "energy": 1, "time": 45, "tags": ["Écran", "Solo"] },
+  {"name": "Regarder un anime", "energy": 1, "time": 30, "tags": ["Écran", "Solo"] },
+  {"name": "Jouer avec Furipuyu", "energy": 2, "time": 30, "tags": ["🐱"] },
+  {"name": "Faire un gâteau pour Wawou", "energy": 3, "time": 60, "tags": ["Solo", "Créatif"], "cooldownDays": 1 },
+  {"name": "Fabriquer un jouer pour Furipuyu", "energy": 3, "time": 60, "tags": ["🐱", "Créatif", "Solo"], "cooldownDays": 1 },
+  {"name": "Faire une promenade", "energy": 3, "time": 30, "tags": ["Extérieur", "Solo"], "cooldownDays": 1 },
+  {"name": "Expédition Photo", "energy": 3, "time": 60, "tags": ["Extérieur", "Photo", "Créatif", "Solo"], "cooldownDays": 1 },
+  {"name": "Traiter des photos", "energy": 3, "time": 45, "tags": ["Photo", "Solo", "Créatif"] },
+  {"name": "Petite sieste", "energy": 1, "time": 30, "tags": ["Solo"], "cooldownDays": 1 },
 ];
 
 const ICONS = {
@@ -818,6 +856,13 @@ function celebrate() {
   setTimeout(() => box.remove(), 1100);
 }
 
+/* ---------- En-tête avec le logo ---------- */
+function brandHeader(subtitle) {
+  return h("header", { class: "brand" },
+    h("img", { src: "icon-192.png", alt: "", width: "48", height: "48" }),
+    h("div", { class: "brand-text" }, h("h1", null, "Bored Boubou Tool"), subtitle && h("p", { class: "muted" }, subtitle)));
+}
+
 /* ---------- Aide au premier lancement ---------- */
 function welcomeCard() {
   if (localStorage.getItem(WELCOME_KEY)) return null;
@@ -865,7 +910,7 @@ function renderPick() {
 
   if (!data.activities.length) {
     return h("div", { class: "screen" },
-      h("header", { class: "top" }, h("h1", { class: "accent" }, "Que faire ?")), banner,
+      brandHeader(null), banner,
       h("div", { class: "empty" }, "Ta liste est vide. Ajoute tes activités pour commencer.",
         h("button", { class: "btn primary", onclick: () => openActivityEditor(null) }, "Ajouter une activité"),
         h("button", { class: "link", onclick: loadExamples }, "ou charger quelques exemples")));
@@ -909,7 +954,7 @@ function renderPick() {
       "🎲 Tirer au sort", h("small", null, eligible.length ? plural(eligible.length, "possible", "possibles") : "aucune possible")));
 
   return h("div", { class: "screen" },
-    h("header", { class: "top col" }, h("h1", { class: "accent" }, "Que faire ?"), h("p", { class: "muted" }, `${greeting()} — qu'est-ce qui te tente ?`)),
+    brandHeader(`${greeting()} — qu'est-ce qui te tente ?`),
     banner, welcomeCard(), profiles, energyCard, timeCard, tagsCard, listCard, rollBar);
 }
 
@@ -1381,7 +1426,7 @@ function renderSettings() {
     !standalone && h("div", { class: "section-title" }, "Application"),
     !standalone && (installEvt
       ? actionRow("📲", "Installer sur l'écran d'accueil", "S'ouvre comme une vraie app, sans barre de navigateur", doInstall)
-      : h("div", { class: "card" }, h("p", { class: "text small" }, "Pour installer : dans Chrome, menu ⋮ → « Installer l'application » (ou « Ajouter à l'écran d'accueil »)."))),
+      : h("div", { class: "card" }, h("p", { class: "text small" }, "Pour installer : menu ⋮ du navigateur → « Installer » ou « Ajouter à l'écran d'accueil » (Firefox comme Chrome)."))),
 
     h("div", { class: "section-title" }, "Affichage"),
     h("div", { class: "card" },
@@ -1410,7 +1455,7 @@ function renderSettings() {
         onOk: () => commit({ activities: [], tags: [], profiles: [] }, "Tout a été effacé", true),
       }), "danger-row")),
 
-    h("p", { class: "footer-note" }, `Que faire ? v${APP_VERSION}`, h("br"), "Fonctionne hors-ligne · aucune donnée envoyée"));
+    h("p", { class: "footer-note" }, `Bored Boubou Tool v${APP_VERSION}`, h("br"), "Fonctionne hors-ligne · aucune donnée envoyée"));
 }
 function openProfileEditor(p) {
   const s = openSheet({
@@ -1440,7 +1485,7 @@ function loadExamples() {
 function exportText() {
   return JSON.stringify({ app: "que-faire", version: 3, exportedAt: new Date().toISOString(), activities: data.activities, tags: data.tags, profiles: data.profiles }, null, 2);
 }
-const exportName = () => `que-faire-${new Date().toISOString().slice(0, 10)}.json`;
+const exportName = () => `boubou-tool-${new Date().toISOString().slice(0, 10)}.json`;
 function markExported() { try { localStorage.setItem(EXPORT_KEY, String(Date.now())); } catch {} render(); }
 function doDownload() {
   const url = URL.createObjectURL(new Blob([exportText()], { type: "application/json" }));
@@ -1454,8 +1499,8 @@ async function doShare() {
   const text = exportText();
   try {
     const file = new File([text], exportName(), { type: "application/json" });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: "Sauvegarde Que faire ?" }); markExported(); return; }
-    if (navigator.share) { await navigator.share({ title: "Sauvegarde Que faire ?", text }); markExported(); return; }
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: "Sauvegarde Bored Boubou Tool" }); markExported(); return; }
+    if (navigator.share) { await navigator.share({ title: "Sauvegarde Bored Boubou Tool", text }); markExported(); return; }
     await navigator.clipboard.writeText(text); markExported(); showToast("Sauvegarde copiée dans le presse-papiers");
   } catch (e) {
     if (e && e.name === "AbortError") return;

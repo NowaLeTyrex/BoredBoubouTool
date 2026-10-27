@@ -1,7 +1,7 @@
 /* Service worker : permet l'usage hors-ligne.
    Page : réseau d'abord (pour recevoir les mises à jour), cache si pas de connexion.
    Pour forcer une mise à jour après modification, change le numéro de CACHE. */
-const CACHE = "que-faire-v2.3";
+const CACHE = "boubou-v2.4.1";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];
 
 self.addEventListener("install", e => {
