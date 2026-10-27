@@ -1,0 +1,30 @@
+QUE FAIRE ? — v2
+================
+
+Contenu : 6 fichiers à mettre tels quels à la racine d'un dépôt GitHub.
+  index.html, manifest.json, sw.js, icon-192.png, icon-512.png, icon-maskable-512.png
+
+Mise en ligne (GitHub Pages)
+  1. github.com → « + » → New repository → nom « que-faire » → Public → Create.
+     (Dépôt déjà créé pour la v1 ? Supprime les anciens fichiers et passe à l'étape 2.)
+  2. « Add file » → « Upload files » → glisse les 6 fichiers → Commit changes.
+  3. Settings → Pages → Branch : main, dossier / (root) → Save.
+  4. Attends 1 à 2 minutes. Adresse : https://TON-PSEUDO.github.io/que-faire/
+
+Installation sur Android
+  5. Ouvre l'adresse dans Chrome sur le téléphone.
+  6. Touche « Installer » dans le bandeau de l'app, ou menu ⋮ → « Installer l'application ».
+
+Récupérer tes activités de la v1
+  - Même adresse que la v1 : elles sont reprises automatiquement.
+  - Sinon : dans la v1, « Exporter » → envoie le fichier sur le téléphone
+    → v2 : Réglages → « Importer un fichier » → « Fusionner ».
+
+Mettre à jour plus tard
+  Remplace les fichiers sur GitHub. Si tu modifies index.html, change aussi le
+  numéro dans sw.js (ligne CACHE = "que-faire-v2.3") pour que le téléphone
+  récupère la nouvelle version.
+
+Sauvegarde
+  Les données sont uniquement dans Chrome sur le téléphone.
+  Réglages → « Exporter un fichier » ou « Partager la sauvegarde » de temps en temps.
